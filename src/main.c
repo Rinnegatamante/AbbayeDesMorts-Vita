@@ -34,7 +34,10 @@
 #include "comun.h"
 #include <SDL/SDL_getenv.h>
 #include "main.h"
-
+#ifdef _PSP2
+#include <vitasdk.h>
+#include <vita2d.h>
+#endif
 #ifdef _3DS
 #include "3ds.h"
 #endif
@@ -109,7 +112,57 @@ main () {
   exit(0);
 }
 
+int y = 100;
+uint32_t white;
+vita2d_pgf* debug_font;
+void consolePrintf(const char *format, ...){
+	char str[512] = { 0 };
+	va_list va;
+
+	va_start(va, format);
+	vsnprintf(str, 512, format, va);
+	va_end(va);
+
+	vita2d_pgf_draw_text(debug_font, 100, y, white, 1.0, str);
+	y+=20;
+}
+
+void credits() {
+	vita2d_init();
+	vita2d_set_clear_color(RGBA8(0x00, 0x00, 0x00, 0xFF));
+	debug_font = vita2d_load_default_pgf();
+	white = RGBA8(0xFF, 0xFF, 0xFF, 0xFF);
+	SceCtrlData pad;
+	for (;;){
+		sceCtrlPeekBufferPositive(0, &pad, 1);
+		vita2d_start_drawing();
+		vita2d_clear_screen();
+		consolePrintf("AbbayeDesMorts Vita v.1.0");
+		consolePrintf(" ");
+		consolePrintf(" ");
+		consolePrintf(" ");
+		consolePrintf("Thanks to: ");
+		consolePrintf("- Billy McLaughlin II");
+		consolePrintf("- Styde Pregny");
+		consolePrintf("- XandridFire");
+		consolePrintf("for their awesome support on Patreon!");
+		consolePrintf(" ");
+		consolePrintf(" ");
+		consolePrintf("Press X to start game");
+		vita2d_end_drawing();
+		vita2d_wait_rendering_done();
+		vita2d_swap_buffers();
+		y = 100;
+		if (pad.buttons & SCE_CTRL_CROSS){ 
+			break;
+		}
+	}
+	vita2d_fini();
+}
+
 void iniciar_sdl () {
+	
+	credits();
 
 	/* Centrar ventana */
 	putenv("SDL_VIDEO_CENTERED=1");
