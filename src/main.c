@@ -1251,7 +1251,9 @@ void tecladoj (struct protagonista *jean, int *tecla) {
 /* Gestión del teclado durante el juego */
 
 	SDL_Event evento;
-
+	
+	uint8_t up_state = 0, x_state = 0;
+	
 	if (*tecla > 0)
 		*tecla = 0;
 	
@@ -1260,14 +1262,14 @@ void tecladoj (struct protagonista *jean, int *tecla) {
 	   	exit(0);
 	#ifdef _PSP2
 		if (evento.type == SDL_JOYBUTTONDOWN){
-			if(evento.jbutton.button==2) { // Cross button
-				*tecla = 6;
-			}else if(evento.jbutton.button==1) { // Circle button
+			if(evento.jbutton.button==1) { // Circle button
 				*tecla = 9;
 			}else if(evento.jbutton.button==11) { // Start button
 				exit(0);
-			}else if(evento.jbutton.button==8) { // Up button
+			}else if((evento.jbutton.button==8) || (evento.jbutton.button==2)) { // Up/Cross button
 				if ((jean->pulsa[0] == 0) && (jean->salto == 0) && (jean->agachado == 0)) jean->salto = 1;
+				if (evento.jbutton.button==2) x_state = 1;
+				else up_state = 1;
 			}else if(evento.jbutton.button==6) { // Down button
 				if ((jean->pulsa[1] == 0) && (jean->salto == 0)) {
 					jean->pulsa[1] = 1;
@@ -1285,8 +1287,10 @@ void tecladoj (struct protagonista *jean, int *tecla) {
 				}
 			}
 		}else if (evento.type == SDL_JOYBUTTONUP){
-			if(evento.jbutton.button==8) { // Up button
-				jean->pulsa[0] = 0;
+			if((evento.jbutton.button==8) || (evento.jbutton.button==2)) { // Up/Cross button
+				if (evento.jbutton.button==2) x_state = 0;
+				else up_state = 0;
+				if ((x_state == 0) && (up_state == 0)) jean->pulsa[0] = 0;
 			}else if(evento.jbutton.button==6) { // Down button
 				jean->pulsa[1] = 0;
 				jean->agachado = 0;
@@ -1374,7 +1378,9 @@ void teclado (int *tecla, int fase) {
 		#ifdef _PSP2
 		if (evento.type == SDL_JOYBUTTONDOWN){
 			if(evento.jbutton.button==2) { // Cross button
-				*tecla = 6;
+				if (fase == 1){
+					*tecla = 7;
+				}
 			}else if(evento.jbutton.button==11) { // Start button
 				*tecla = 5;
 			}else if(evento.jbutton.button==1) { // Circle button
