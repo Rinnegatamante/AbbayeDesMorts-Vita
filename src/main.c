@@ -34,6 +34,13 @@
 #include "comun.h"
 #include <SDL/SDL_getenv.h>
 #include "main.h"
+#include "barradeestado.h"
+#include "bosses.h"
+#include "enemigos.h"
+#include "fase.h"
+#include "jean.h"
+#include "musica.h"
+#include "pantallas.h"
 #ifdef _PSP2
 #include <vitasdk.h>
 #include <vita2d.h>
@@ -43,7 +50,7 @@
 #endif
 
 #undef main
-main () {
+int main (void) {
 
   /* Variables */
   SDL_Surface *pantalla = NULL;
@@ -64,8 +71,8 @@ main () {
 #ifdef _RENDER_320_240
   pantalla = SDL_SetVideoMode(320,240,16,SDL_HWSURFACE|SDL_DOUBLEBUF);
   #ifdef _PSP2
-  SDL_SetVideoModeScaling(0, 0, 960, 544);
-  SDL_SetVideoModeBilinear(1);
+  SDL_VITA_SetVideoModeScaling(0, 0, 960, 544);
+  SDL_VITA_SetVideoModeBilinear(1);
   #endif
 #else
   pantalla = SDL_SetVideoMode(640,480,32,SDL_HWSURFACE|SDL_DOUBLEBUF);

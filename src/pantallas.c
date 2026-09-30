@@ -12,6 +12,7 @@
 #include <math.h>
 #include "comun.h"
 #include "pantallas.h"
+#include "main.h"
 
 #ifdef _3DS
 #include "3ds.h"

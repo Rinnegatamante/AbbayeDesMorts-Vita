@@ -7,7 +7,8 @@ LIBS =   -lSceLibKernel_stub -lSceAppMgr_stub -lm -lSceNet_stub -lSceNetCtl_stub
     -lSceAppUtil_stub -lScePower_stub -lmad -lSDL_mixer -lSDL_ttf -lvorbisfile -lvorbis -logg \
 	-lSDL -lSDL_image -lSceAudio_stub -lc -lvita2d -lScePvf_stub -lScePgf_stub -ljpeg -lpng16 \
 	-lz -lSceDisplay_stub -lfreetype -lSceGxm_stub -lSceCtrl_stub -lSceSysmodule_stub \
-	-lSceCommonDialog_stub -lSceHid_stub
+	-lSceCommonDialog_stub -lSceHid_stub -lSceTouch_stub \
+	-lmikmod -lFLAC -lwebp -lsharpyuv -lbz2 -lpthread
 
 CFILES   := $(foreach dir,$(SOURCES), $(wildcard $(dir)/*.c))
 CPPFILES   := $(foreach dir,$(SOURCES), $(wildcard $(dir)/*.cpp))
@@ -25,11 +26,11 @@ all: $(TARGET).vpk
 
 $(TARGET).vpk: $(TARGET).velf
 	vita-mksfoex -s TITLE_ID=ABBAYEDMO "Abbaye Des Morts" param.sfo
-	cp -f param.sfo sce_sys/param.sfo
-	
-	#------------ Comment this if you don't have 7zip ------------------
-	7z a -tzip $(TARGET).vpk -r sce_sys/* eboot.bin 
-	#-------------------------------------------------------------------
+	vita-pack-vpk -s param.sfo -b eboot.bin \
+		-a sce_sys/icon0.png=sce_sys/icon0.png \
+		-a sce_sys/livearea/contents/bg.png=sce_sys/livearea/contents/bg.png \
+		-a sce_sys/livearea/contents/startup.png=sce_sys/livearea/contents/startup.png \
+		-a sce_sys/livearea/contents/template.xml=sce_sys/livearea/contents/template.xml $@
 
 %.velf: %.elf
 	cp $< $<.unstripped.elf
@@ -38,7 +39,7 @@ $(TARGET).vpk: $(TARGET).velf
 	vita-make-fself -s $@ eboot.bin
 
 $(TARGET).elf: $(OBJS)
-	$(CXX) $(CXXFLAGS) $^ $(LIBS) -o $@
+	$(CXX) $(CXXFLAGS) $^ -Wl,--start-group $(LIBS) -Wl,--end-group -o $@
 
 clean:
 	@rm -rf $(TARGET).velf $(TARGET).elf $(OBJS)

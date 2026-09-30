@@ -1,6 +1,9 @@
 /* structs.h */
 /* Almacena los structs utilizados en el juego */
 
+#ifndef ABBAYE_STRUCTS_H
+#define ABBAYE_STRUCTS_H
+
 /* Structs */
 struct enem {
   int tipo[7];
@@ -39,3 +42,5 @@ struct protagonista {
 	int pulsa[4]; /* Pulsaciones de teclas */
 	int temp;
 };
+
+#endif
